@@ -96,3 +96,21 @@ def make_quiz(lecture: int) -> str:
         "question": f"「{term['term']}」の意味は？",
         "answer": term["definition"]
     }, ensure_ascii=False)
+
+def save_learning_log(lecture: int, note: str) -> str:
+    """学習内容を保存したいと利用者が頼んだときに使う。
+    保存する前に利用者の承認が必要。
+    """
+    from datetime import datetime
+    if lecture < 1 or not note.strip():
+        return "有効な講義回と学習内容を指定してください。"
+
+    folder = Path(__file__).resolve().parent.parent / "learning_log"
+    folder.mkdir(exist_ok=True)
+    filename = f"lec{lecture:02d}_{datetime.now():%Y%m%d_%H%M%S_%f}.md"
+    path = folder / filename
+    path.write_text(
+        f"# 第{lecture}回の学習記録\n\n{note}\n",
+        encoding="utf-8"
+    )
+    return f"保存しました: {path}"
